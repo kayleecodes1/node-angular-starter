@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en" ng-app="app" ng-controller="AppCtrl">
+<head>
+    <meta charset="UTF-8">
+    <title ng-bind="pageTitle"></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- inject:css --><!-- endinject -->
+</head>
+<body>
+    <div ui-view>
+        Default View (App Index)<br />
+        <div class="cat"></div><br />
+        <button type="button" class="btn btn-default btn-lg" ui-sref="state1">
+            <span class="glyphicon glyphicon-star"></span> State 1
+        </button>
+    </div>
+    <!-- inject:js --><!-- endinject -->
+</body>
+</html>
