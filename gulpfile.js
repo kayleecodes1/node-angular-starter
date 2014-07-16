@@ -61,12 +61,13 @@ gulp.task('build-assets', function () {
 gulp.task('build-css', function () {
 
     return gulp.src( cfg.source_files.less.all )
-        .pipe(changed(cfg.build_dir))
+        //.pipe(changed(cfg.build_dir))
         .pipe(sourcemaps.init())
         .pipe(less({
             paths: [ path.join( __dirname, 'less', 'includes' ) ]
         }))
         .pipe(autoprefix('last 2 versions'))
+        .pipe(concat(pkg.name + '-' + pkg.version + '.css'))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(cfg.build_dir));
 });
@@ -75,6 +76,11 @@ gulp.task('build-templates', function () {
 
     //TODO
     gulp.src( cfg.source_files.html.tpl )
+        .pipe(html2js({
+            base: 'src',
+            outputModuleName: 'appTemplates'
+        }))
+        .pipe( concat(pkg.name + '-' + pkg.version + '-templates.js') )
         .pipe( gulp.dest( cfg.build_dir ) );
 });
 
@@ -93,16 +99,16 @@ gulp.task('build-js', ['build-lint'], function () {
         .pipe(gulp.dest(cfg.build_dir));
 });
 
-gulp.task('build-index', /*['build-vendor', 'build-css', 'build-js', 'build-templates'], */function () {
-    
-    var vendorCSS = gulp.src( cfg.vendor_files.css, {cwd: cfg.build_dir + '/vendor', read: false} );
+gulp.task('build-index', function () {
+
+    var vendorCSS = gulp.src( cfg.vendor_files.css, {cwd: path.join(__dirname, cfg.build_dir, 'vendor'), read: false} );
+    var vendorJS = gulp.src( cfg.vendor_files.js, {cwd: path.join(__dirname, cfg.build_dir, 'vendor'), read: false} );
     var appCSS = gulp.src([cfg.build_dir + '/**/*.css', '!' + cfg.build_dir + '/vendor/**/*'], {read: false});
-    var vendorJS = gulp.src( cfg.vendor_files.js, {cwd: cfg.build_dir + '/vendor', read: false} );
     var appJS = gulp.src([cfg.build_dir + '/**/*.js', '!' + cfg.build_dir + '/vendor/**/*'], {read: false});
 
-    var options = { addRootSlash: false, ignorePath: 'build' };
     return gulp.src( cfg.source_files.html.index )
-        .pipe( inject( es.merge( vendorCSS, appCSS, vendorJS, appJS ), options ))
+        .pipe( inject( es.merge( vendorCSS, vendorJS ), { addPrefix: 'vendor', addRootSlash: false, starttag: '<!-- inject:vendor:{{ext}} -->' } ))
+        .pipe( inject( es.merge( appCSS, appJS ), { ignorePath: cfg.build_dir, addRootSlash: false, starttag: '<!-- inject:app:{{ext}} -->' } ))
         .pipe(gulp.dest(cfg.build_dir));
 });
 
@@ -126,11 +132,11 @@ gulp.task('watch', ['build'], function () {
 
     livereload.listen();
 
-    /*gulp.watch(cfg.source_files.html.index, ['index']);
-    gulp.watch(cfg.source_files.html.tpl, ['js']);
-    gulp.watch(cfg.source_files.assets, ['assets']);
-    gulp.watch(cfg.source_files.less.all, ['css']);
-    gulp.watch(cfg.source_files.js.all, ['js']);*/
+    gulp.watch(cfg.source_files.assets, ['build-assets']);
+    gulp.watch(cfg.source_files.less.all, ['build-css']);
+    gulp.watch(cfg.source_files.html.tpl, ['build-templates']);
+    gulp.watch(cfg.source_files.js.all, ['build-js']);
+    gulp.watch(cfg.source_files.html.index, ['build-index']);
 
     gulp.watch(cfg.build_dir + '/**', livereload.changed);
 });
@@ -201,7 +207,7 @@ gulp.task('js', ['lint'], function () {
         .pipe(gulp.dest(cfg.compile_dir));
 });
 
-gulp.task('index', ['css', 'js'], function () {
+gulp.task('index', function () {
     return gulp.src(cfg.source_files.html.index)
         .pipe(inject(
             gulp.src(cfg.compile_dir + '/**/*.{css,js}', {read: false}),
@@ -215,5 +221,10 @@ gulp.task('index', ['css', 'js'], function () {
 });
 
 gulp.task('compile', function ( cb ) {
-    runSequence( 'compile-clean', ['assets', 'index'], cb );
+    runSequence(
+        'compile-clean',
+        ['assets', 'css', 'js'],
+        ['index'],
+        cb
+    );
 });
