@@ -26,7 +26,8 @@
     "gulp-minify-html": "^0.1.4",
     "gulp-css-rebase-urls": "0.0.5",
     "gulp-css-url-adjuster": "^0.1.0",
-    "gulp-changed": "^0.4.0"
+    "gulp-changed": "^0.4.0",
+    "gulp-watch": "^0.6.8"
   },
   "dependencies": {
     "gulp-ngmin": "^0.3.0"

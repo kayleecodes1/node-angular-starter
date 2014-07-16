@@ -8,11 +8,13 @@ module.exports = {
 
     vendor_files: {
         assets: [//TODO:use
-            'bootstrap-css-only/fonts/**/*'
+            'bootstrap-css-only/fonts/**/*',
+            'components-font-awesome/fonts/**/*'
         ],
         css: [
             'bootstrap-css-only/css/bootstrap.min.css',
-            'bootstrap-css-only/css/bootstrap-theme.min.css'
+            'bootstrap-css-only/css/bootstrap-theme.min.css',
+            'components-font-awesome/css/font-awesome.min.css'
         ],
         js: [
             'angular/angular.min.js',

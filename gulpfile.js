@@ -19,6 +19,7 @@ var gulp = require('gulp'),
     html2js = require('gulp-html2js'),
     minifyHTML = require('gulp-minify-html'),
     runSequence = require('run-sequence'),
+    watch = require('gulp-watch'),
     changed = require('gulp-changed'),
     livereload = require('gulp-livereload');
 
@@ -74,7 +75,6 @@ gulp.task('build-css', function () {
 
 gulp.task('build-templates', function () {
 
-    //TODO
     gulp.src( cfg.source_files.html.tpl )
         .pipe(html2js({
             base: 'src',
@@ -112,8 +112,6 @@ gulp.task('build-index', function () {
         .pipe(gulp.dest(cfg.build_dir));
 });
 
-//TODO: this needs to CHANGE
-// DEPENDENCIES need to be removed so WATCH will work
 gulp.task('build', function ( cb ) {
     runSequence(
         'build-clean',
@@ -132,10 +130,29 @@ gulp.task('watch', ['build'], function () {
 
     livereload.listen();
 
-    gulp.watch(cfg.source_files.assets, ['build-assets']);
+    gulp.watch(cfg.source_files.assets, ['build-assets'])
+    .on('change', function ( event ) {
+        if( event.type === 'renamed' || event.type === 'deleted' ) {
+            var pathParts = (event.old || event.path).split(path.sep);
+            var deletePath = pathParts.slice(pathParts.indexOf('src') + 1).join(path.sep);
+            gulp.src(deletePath, {cwd: cfg.build_dir}).pipe(clean());
+        }
+    });
     gulp.watch(cfg.source_files.less.all, ['build-css']);
     gulp.watch(cfg.source_files.html.tpl, ['build-templates']);
-    gulp.watch(cfg.source_files.js.all, ['build-js']);
+    gulp.watch(cfg.source_files.js.all, [])
+    .on('change', function ( event ) {
+        if( event.type === 'added' || event.type === 'renamed' || event.type === 'deleted' ) {
+            if( event.type === 'renamed' || event.type === 'deleted' ) {
+                var pathParts = (event.old || event.path).split(path.sep);
+                var deletePath = pathParts.slice(pathParts.indexOf('src') + 1).join(path.sep);
+                gulp.src(deletePath, {cwd: cfg.build_dir}).pipe(clean());
+            }
+            runSequence( 'build-js', 'build-index', function(){} );
+        } else {
+            runSequence( 'build-js', function(){} );
+        }
+    });
     gulp.watch(cfg.source_files.html.index, ['build-index']);
 
     gulp.watch(cfg.build_dir + '/**', livereload.changed);

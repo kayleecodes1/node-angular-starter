@@ -9,40 +9,80 @@
 </head>
 <body>
     <header class="navbar navbar-static-top navbar-default" role="banner">
-        <div class="container-fluid">
+        <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" ui-sref="index">Node Angular Starter</a>
+                <a class="navbar-brand" ui-sref="index">
+                    {{ APP_TITLE }}
+                    <span class="brand-subtitle">v0.0.5</span>
+                </a>
             </div>
             <ul class="nav navbar-nav">
-                <li ui-sref-active="active"><a ui-sref="index">Home</a></li>
-                <li ui-sref-active="active"><a ui-sref="state1">State 1</a></li>
+                <li ui-sref-active="active"><a ui-sref="about">What is it?</a></li>
             </ul>
-            <div class="navbar-right">
-                <p class="navbar-text" ng-if="!loggedIn">Not signed in</p>
-                <ul class="nav navbar-nav" ng-if="loggedIn">
-                    <li class="dropdown">
-                        <a class="dropdown-toggle">
-                           {{ username }}
-                           <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Admin Panel</a></li>
-                            <li><a href="#">Edit Profile</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#">Other Action</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li ui-sref-active="active">
+                    <a href="http://github.com"><i class="fa fa-github"></i> Fork on Github</a>
+                </li>
+            </ul>
         </div>
     </header>
-    <div ui-view class="">
+    <div ui-view>
         <div class="jumbotron">
-            <h1>Node Angular Starter</h1>
-            <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-            <p><a class="btn btn-primary btn-lg" role="button" ui-sref="state1">Learn more</a></p>
+            <div class="container">
+                <h1 ng-bind="APP_TITLE"></h1>
+                <p>{{ APP_TITLE }} is a project designed to get an organized, scalable, API-based application up and running quickly.</p>
+                <div class="btn-group">
+                    <a class="btn btn-default btn-lg" role="button" ui-sref="about">
+                        <i class="fa fa-book"> Read the Docs</i>
+                    </a>
+                    <a class="btn btn-success btn-lg" role="button" href="http://github.com">
+                        <i class="fa fa-download"></i> Download
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-4">
+                    <h4><i class="fa fa-database"></i> NodeJS</h4>
+                    <p>Content goes here.</p>
+                </div>
+                <div class="col-xs-4">
+                    <h4><i class="fa fa-file"></i> AngularJS</h4>
+                    <p>Content goes here.</p>
+                </div>
+                <div class="col-xs-4">
+                    <h4><i class="fa fa-database"></i> Gulp</h4>
+                    <p>Content goes here.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4">
+                    <h4><i class="fa fa-twitter"></i> Twitter Bootstrap</h4>
+                    <p>Content goes here.</p>
+                </div>
+                <div class="col-xs-4">
+                    <h4><i class="fa fa-magic"></i> LESS CSS</h4>
+                    <p>Content goes here.</p>
+                </div>
+                <div class="col-xs-4">
+                    <h4><i class="fa fa-folder"></i> Scalable Structure</h4>
+                    <p>Content goes here.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>When should I use this template?</h1>
+                    <p>More content goes here.</p>
+                </div>
+            </div>
         </div>
     </div>
+    <footer class="footer">
+        <div class="container">
+            <p class="text-muted">&copy; Copyright 2014 Kyle Maguire</p>
+        </div>
+    </footer>
     <!-- inject:vendor:js --><!-- endinject -->
     <!-- inject:app:js --><!-- endinject -->
 </body>
