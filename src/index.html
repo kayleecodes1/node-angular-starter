@@ -8,12 +8,40 @@
     <!-- inject:app:css --><!-- endinject -->
 </head>
 <body>
-    <div ui-view>
-        Default View (App Index)<br />
-        <div class="cat"></div><br />
-        <button type="button" class="btn btn-default btn-lg" ui-sref="state1">
-            <span class="glyphicon glyphicon-star"></span> State 1
-        </button>
+    <header class="navbar navbar-static-top navbar-default" role="banner">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" ui-sref="index">Node Angular Starter</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li ui-sref-active="active"><a ui-sref="index">Home</a></li>
+                <li ui-sref-active="active"><a ui-sref="state1">State 1</a></li>
+            </ul>
+            <div class="navbar-right">
+                <p class="navbar-text" ng-if="!loggedIn">Not signed in</p>
+                <ul class="nav navbar-nav" ng-if="loggedIn">
+                    <li class="dropdown">
+                        <a class="dropdown-toggle">
+                           {{ username }}
+                           <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">Admin Panel</a></li>
+                            <li><a href="#">Edit Profile</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">Other Action</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <div ui-view class="">
+        <div class="jumbotron">
+            <h1>Node Angular Starter</h1>
+            <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+            <p><a class="btn btn-primary btn-lg" role="button" ui-sref="state1">Learn more</a></p>
+        </div>
     </div>
     <!-- inject:vendor:js --><!-- endinject -->
     <!-- inject:app:js --><!-- endinject -->

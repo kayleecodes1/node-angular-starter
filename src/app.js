@@ -1,7 +1,9 @@
 angular.module( 'app', [
     'ui.router',
+    'ui.bootstrap',
     'appTemplates',
-    'app.state1'
+    'app.state1',
+    'APIService'
 ])
 
 .config( function myAppConfig ( $stateProvider, $urlRouterProvider ) {
@@ -11,13 +13,16 @@ angular.module( 'app', [
             pageTitle: 'App Index'
         }
     } );
-    $urlRouterProvider.otherwise( '' );
+    $urlRouterProvider.otherwise( '/' );
 })
 
 .run( function run () {
 })
 
 .controller( 'AppCtrl', function AppCtrl ( $scope ) {
+
+    $scope.loggedIn = true;
+    $scope.username = 'Kyle Maguire';
 
     // Update the page title according the current state data.
     $scope.$on( '$stateChangeSuccess', function( event, toState ) {
