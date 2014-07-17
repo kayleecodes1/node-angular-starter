@@ -9,7 +9,7 @@ angular.module( 'app', [
 .constant( 'APP_TITLE', 'Node Angular Starter' )
 
 .config( function myAppConfig ( $stateProvider, $urlRouterProvider ) {
-     $stateProvider.state( 'index', {
+     $stateProvider.state( 'home', {
         url: '/',
         data: {
             pageTitle: 'Home'
@@ -24,8 +24,7 @@ angular.module( 'app', [
 
 .controller( 'AppCtrl', function AppCtrl ( $scope, APP_TITLE ) {
 
-    $scope.loggedIn = true;
-    $scope.username = 'username';
+    $scope.navCollapsed = true;
 
     // Update the page title according the current state data.
     $scope.$on( '$stateChangeSuccess', function( event, toState ) {

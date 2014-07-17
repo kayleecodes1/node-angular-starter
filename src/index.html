@@ -11,19 +11,27 @@
     <header class="navbar navbar-static-top navbar-default" role="banner">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" ui-sref="index">
+                <a class="navbar-brand" ui-sref="home">
                     {{ APP_TITLE }}
-                    <span class="brand-subtitle">v0.0.5</span>
+                    <span class="brand-subtitle">v1.0</span>
                 </a>
+                <button type="button" class="navbar-toggle" ng-click="navCollapsed = !navCollapsed">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
             </div>
-            <ul class="nav navbar-nav">
-                <li ui-sref-active="active"><a ui-sref="about">What is it?</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li ui-sref-active="active">
-                    <a href="http://github.com"><i class="fa fa-github"></i> Fork on Github</a>
-                </li>
-            </ul>
+            <div class="collapse navbar-collapse" collapse="navCollapsed">
+                <ul class="nav navbar-nav">
+                    <li ui-sref-active="active"><a ui-sref="about">What is it?</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li ui-sref-active="active">
+                        <a href="http://github.com"><i class="fa fa-github"></i> Fork on Github</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </header>
     <div ui-view>
@@ -43,29 +51,19 @@
         </div>
         <div class="container">
             <div class="row">
-                <div class="col-xs-4">
+                <div class="col-md-3 col-sm-6 bottom-buffer">
                     <h4><i class="fa fa-database"></i> NodeJS</h4>
                     <p>Content goes here.</p>
                 </div>
-                <div class="col-xs-4">
+                <div class="col-md-3 col-sm-6 bottom-buffer">
                     <h4><i class="fa fa-file"></i> AngularJS</h4>
                     <p>Content goes here.</p>
                 </div>
-                <div class="col-xs-4">
+                <div class="col-md-3 col-sm-6 bottom-buffer">
                     <h4><i class="fa fa-database"></i> Gulp</h4>
                     <p>Content goes here.</p>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-4">
-                    <h4><i class="fa fa-twitter"></i> Twitter Bootstrap</h4>
-                    <p>Content goes here.</p>
-                </div>
-                <div class="col-xs-4">
-                    <h4><i class="fa fa-magic"></i> LESS CSS</h4>
-                    <p>Content goes here.</p>
-                </div>
-                <div class="col-xs-4">
+                <div class="col-md-3 col-sm-6 bottom-buffer">
                     <h4><i class="fa fa-folder"></i> Scalable Structure</h4>
                     <p>Content goes here.</p>
                 </div>
@@ -80,7 +78,9 @@
     </div>
     <footer class="footer">
         <div class="container">
-            <p class="text-muted">&copy; Copyright 2014 Kyle Maguire</p>
+            <p>Designed and built by <a href="#" target="_blank">Kyle Maguire</a> and <a href="#" target="_blank">contributors</a>.</p>
+            <p>Code licensed under <a href="#" target="_blank">MIT License</a>.</p>
+            <p><a href="#" target="_blank">Issues</a></p>
         </div>
     </footer>
     <!-- inject:vendor:js --><!-- endinject -->
