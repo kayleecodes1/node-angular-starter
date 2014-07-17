@@ -1,7 +1,6 @@
 var gulp = require('gulp'),
     path = require('path'),
     es = require('event-stream'),
-    filter = require('gulp-filter'),
     jshint = require('gulp-jshint'),
     clean = require('gulp-clean'),
     less = require('gulp-less'),
@@ -108,7 +107,7 @@ gulp.task('build-index', function () {
 
     return gulp.src( cfg.source_files.html.index )
         .pipe( inject( es.merge( vendorCSS, vendorJS ), { addPrefix: 'vendor', addRootSlash: false, starttag: '<!-- inject:vendor:{{ext}} -->' } ))
-        .pipe( inject( es.merge( appCSS, appJS ), { ignorePath: cfg.build_dir, addRootSlash: false, starttag: '<!-- inject:app:{{ext}} -->' } ))
+        .pipe( inject( es.merge( appCSS, appJS ), { ignorePath: cfg.build_dir, addRootSlash: false } ))
         .pipe(gulp.dest(cfg.build_dir));
 });
 
@@ -220,7 +219,7 @@ gulp.task('js', ['lint'], function () {
 
     return es.merge( bowerJS, templateJS, appJS )
         .pipe(concat(pkg.name + '-' + pkg.version + '.min.js'))
-        .pipe(uglify())
+        .pipe(uglify({mangle: false}))
         .pipe(gulp.dest(cfg.compile_dir));
 });
 

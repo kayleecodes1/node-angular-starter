@@ -3,7 +3,7 @@ angular.module( 'app', [
     'ui.bootstrap',
     'appTemplates',
     'app.about',
-    'APIService'
+    'appData'
 ])
 
 .constant( 'APP_TITLE', 'Node Angular Starter' )

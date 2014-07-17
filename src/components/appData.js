@@ -1,4 +1,4 @@
-angular.module( 'APIService', [] )
+angular.module( 'appData', [] )
 
 .config( function( $httpProvider ) {
     $httpProvider.interceptors.push( function ( $window ) {
