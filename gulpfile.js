@@ -128,7 +128,7 @@ gulp.task('build', function ( cb ) {
 gulp.task('watch', ['build'], function () {
 
     livereload.listen();
-
+    
     gulp.watch(cfg.source_files.assets, ['build-assets'])
     .on('change', function ( event ) {
         if( event.type === 'renamed' || event.type === 'deleted' ) {
@@ -154,7 +154,7 @@ gulp.task('watch', ['build'], function () {
     });
     gulp.watch(cfg.source_files.html.index, ['build-index']);
 
-    gulp.watch(cfg.build_dir + '/**', livereload.changed);
+    gulp.watch(cfg.build_dir + '/**/*', livereload.changed);
 });
 
 
