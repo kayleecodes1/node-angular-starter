@@ -26,9 +26,12 @@
     "gulp-css-rebase-urls": "0.0.5",
     "gulp-css-url-adjuster": "^0.1.0",
     "gulp-changed": "^0.4.0",
-    "gulp-watch": "^0.6.8"
+    "gulp-watch": "^0.6.8",
+    "gulp-imagemin": "^0.6.1",
+    "imagemin-pngcrush": "^0.1.0"
   },
   "dependencies": {
-    "gulp-ngmin": "^0.3.0"
+    "gulp-ngmin": "^0.3.0",
+    "express": "^4.6.1"
   }
 }

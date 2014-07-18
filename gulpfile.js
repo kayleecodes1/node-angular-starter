@@ -3,6 +3,8 @@ var gulp = require('gulp'),
     es = require('event-stream'),
     jshint = require('gulp-jshint'),
     clean = require('gulp-clean'),
+    imagemin = require('gulp-imagemin'),
+    pngcrush = require('imagemin-pngcrush'),
     less = require('gulp-less'),
     rebaseUrls = require('gulp-css-rebase-urls'),
     urlAdjuster = require('gulp-css-url-adjuster'),
@@ -171,7 +173,12 @@ gulp.task('assets', function () {
 
     var bowerAssets = gulp.src(cfg.vendor_files.assets, {cwd: cfg.bower_dir + '/**'});
 
-    var appAssets = gulp.src(cfg.source_files.assets);
+    var appAssets = gulp.src(cfg.source_files.assets)
+        .pipe( imagemin( {
+            progressive: true,
+            svgoPlugins: [ { removeViewBox: false } ],
+            use: [ pngcrush() ]
+        }));
 
     return es.merge( bowerAssets, appAssets )
         .pipe(gulp.dest(cfg.compile_dir + '/assets'));
