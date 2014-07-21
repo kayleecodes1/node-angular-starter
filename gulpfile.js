@@ -22,6 +22,7 @@ var gulp = require('gulp'),
     runSequence = require('run-sequence'),
     watch = require('gulp-watch'),
     changed = require('gulp-changed'),
+    nodemon = require('gulp-nodemon'),
     livereload = require('gulp-livereload');
 
 var pkg = require('./package.json'),
@@ -157,6 +158,23 @@ gulp.task('watch', ['build'], function () {
     gulp.watch(cfg.source_files.html.index, ['build-index']);
 
     gulp.watch(cfg.build_dir + '/**/*', livereload.changed);
+});
+
+
+//------------------------------------------------------------------------------
+// SERVE
+//------------------------------------------------------------------------------
+
+gulp.task('serve', ['watch'], function () {
+    nodemon({
+        script: 'server/server.js',
+        watch: 'server/',
+        ext: 'js json'
+    }).on('start', function () {
+        setTimeout( function () {
+            livereload.changed();
+        }, 2000);
+    });
 });
 
 
