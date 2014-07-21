@@ -1,13 +1,11 @@
 module.exports = {
 
-    bower_dir: 'bower_components',
-
-    source_dir: 'src',
     build_dir: 'build',
     compile_dir: 'dist',
 
+    vendor_dir: 'vendor',
     vendor_files: {
-        assets: [//TODO:use
+        assets: [
             'bootstrap-css-only/fonts/**/*',
             'components-font-awesome/fonts/**/*'
         ],
@@ -36,10 +34,5 @@ module.exports = {
         js: {
             all: 'src/**/*.js'
         }
-    },
-
-    server_files: {
-        //
     }
-  
 };

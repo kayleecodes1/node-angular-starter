@@ -46,9 +46,9 @@ gulp.task('build-clean', function () {
 
 gulp.task('build-vendor', function () {
     
-    var bowerAssets = gulp.src(cfg.vendor_files.assets, {cwd: cfg.bower_dir + '/**'});
-    var bowerCSS = gulp.src(cfg.vendor_files.css, {cwd: cfg.bower_dir + '/**'});
-    var bowerJS = gulp.src(cfg.vendor_files.js, {cwd: cfg.bower_dir + '/**'});
+    var bowerAssets = gulp.src(cfg.vendor_files.assets, {cwd: cfg.vendor_dir + '/**'});
+    var bowerCSS = gulp.src(cfg.vendor_files.css, {cwd: cfg.vendor_dir + '/**'});
+    var bowerJS = gulp.src(cfg.vendor_files.js, {cwd: cfg.vendor_dir + '/**'});
 
     return es.merge( bowerAssets, bowerCSS, bowerJS )
         .pipe(gulp.dest(cfg.build_dir + '/vendor'));
@@ -189,7 +189,7 @@ gulp.task('compile-clean', function () {
 
 gulp.task('assets', function () {
 
-    var bowerAssets = gulp.src(cfg.vendor_files.assets, {cwd: cfg.bower_dir + '/**'});
+    var bowerAssets = gulp.src(cfg.vendor_files.assets, {cwd: cfg.vendor_dir + '/**'});
 
     var appAssets = gulp.src(cfg.source_files.assets)
         .pipe( imagemin( {
@@ -204,7 +204,7 @@ gulp.task('assets', function () {
 
 gulp.task('css', function () {
 
-    var bowerCSS = gulp.src(cfg.vendor_files.css, {cwd: cfg.bower_dir})
+    var bowerCSS = gulp.src(cfg.vendor_files.css, {cwd: cfg.vendor_dir})
         .pipe(rebaseUrls())
         .pipe(urlAdjuster({prepend: 'assets/'}));
 
@@ -230,7 +230,7 @@ gulp.task('lint', function () {
 
 gulp.task('js', ['lint'], function () {
 
-    var bowerJS = gulp.src(cfg.vendor_files.js, {cwd: cfg.bower_dir});
+    var bowerJS = gulp.src(cfg.vendor_files.js, {cwd: cfg.vendor_dir});
 
     var templateJS = gulp.src( cfg.source_files.html.tpl )
         .pipe(minifyHTML({empty: true}))
