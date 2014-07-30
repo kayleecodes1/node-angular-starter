@@ -1,6 +1,6 @@
 var gulp = require('gulp'),
     path = require('path'),
-    es = require('event-stream'),
+    merge = require('merge-stream'),
     jshint = require('gulp-jshint'),
     clean = require('gulp-clean'),
     imagemin = require('gulp-imagemin'),
@@ -50,7 +50,7 @@ gulp.task('build-vendor', function () {
     var bowerCSS = gulp.src(cfg.vendor_files.css, {cwd: cfg.vendor_dir + '/**'});
     var bowerJS = gulp.src(cfg.vendor_files.js, {cwd: cfg.vendor_dir + '/**'});
 
-    return es.merge( bowerAssets, bowerCSS, bowerJS )
+    return merge( bowerAssets, bowerCSS, bowerJS )
         .pipe(gulp.dest(cfg.build_dir + '/vendor'));
 });
 
@@ -109,8 +109,8 @@ gulp.task('build-index', function () {
     var appJS = gulp.src([cfg.build_dir + '/**/*.js', '!' + cfg.build_dir + '/vendor/**/*'], {read: false});
 
     return gulp.src( cfg.source_files.html.index )
-        .pipe( inject( es.merge( vendorCSS, vendorJS ), { addPrefix: 'vendor', addRootSlash: false, starttag: '<!-- inject:vendor:{{ext}} -->' } ))
-        .pipe( inject( es.merge( appCSS, appJS ), { ignorePath: cfg.build_dir, addRootSlash: false } ))
+        .pipe( inject( merge( vendorCSS, vendorJS ), { addPrefix: 'vendor', addRootSlash: false, starttag: '<!-- inject:vendor:{{ext}} -->' } ))
+        .pipe( inject( merge( appCSS, appJS ), { ignorePath: cfg.build_dir, addRootSlash: false } ))
         .pipe(gulp.dest(cfg.build_dir));
 });
 
@@ -198,7 +198,7 @@ gulp.task('assets', function () {
             use: [ pngcrush() ]
         }));
 
-    return es.merge( bowerAssets, appAssets )
+    return merge( bowerAssets, appAssets )
         .pipe(gulp.dest(cfg.compile_dir + '/assets'));
 });
 
@@ -214,7 +214,7 @@ gulp.task('css', function () {
         }))
         .pipe(autoprefix('last 2 versions'));
 
-    return es.merge( bowerCSS, appCSS )
+    return merge( bowerCSS, appCSS )
         .pipe(concat(pkg.name + '-' + pkg.version + '.min.css'))
         .pipe(minifyCSS({ keepSpecialComments: 0 }))
         .pipe(gulp.dest(cfg.compile_dir));
@@ -242,7 +242,7 @@ gulp.task('js', ['lint'], function () {
     var appJS = gulp.src( cfg.source_files.js.all )
         .pipe(ngMin());
 
-    return es.merge( bowerJS, templateJS, appJS )
+    return merge( bowerJS, templateJS, appJS )
         .pipe(concat(pkg.name + '-' + pkg.version + '.min.js'))
         .pipe(uglify({mangle: false}))
         .pipe(gulp.dest(cfg.compile_dir));
