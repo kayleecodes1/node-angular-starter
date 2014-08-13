@@ -20,6 +20,7 @@ var gulp = require('gulp'),
     html2js = require('gulp-html2js'),
     minifyHTML = require('gulp-minify-html'),
     gzip = require('gulp-gzip'),
+    size = require('gulp-filesize'),
     runSequence = require('run-sequence'),
     watch = require('gulp-watch'),
     changed = require('gulp-changed'),
@@ -200,6 +201,7 @@ gulp.task('compile-assets', function () {
         }));
 
     return merge( bowerAssets, appAssets )
+        .pipe(size())
         .pipe(gulp.dest(cfg.compile_dir + '/assets'));
 });
 
@@ -218,7 +220,8 @@ gulp.task('compile-css', function () {
     return merge( bowerCSS, appCSS )
         .pipe(concat(pkg.name + '-' + pkg.version + '.min.css'))
         .pipe(minifyCSS({ keepSpecialComments: 0 }))
-        .pipe(gzip({ append: true }))
+        .pipe(gzip({ append: false }))
+        .pipe(size())
         .pipe(gulp.dest(cfg.compile_dir));
 
 });
@@ -247,7 +250,8 @@ gulp.task('compile-js', ['compile-lint'], function () {
     return merge( bowerJS, templateJS, appJS )
         .pipe(concat(pkg.name + '-' + pkg.version + '.min.js'))
         .pipe(uglify({mangle: false}))
-        .pipe(gzip({ append: true }))
+        .pipe(gzip({ append: false }))
+        .pipe(size())
         .pipe(gulp.dest(cfg.compile_dir));
 });
 

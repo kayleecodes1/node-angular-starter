@@ -31,9 +31,11 @@
     "imagemin-pngcrush": "^0.1.0",
     "gulp-nodemon": "^1.0.4",
     "merge-stream": "^0.1.5",
-    "gulp-gzip": "0.0.8"
+    "gulp-gzip": "0.0.8",
+    "gulp-filesize": "0.0.6"
   },
   "dependencies": {
+    "path": "^0.4.9",
     "express": "^4.6.1"
   }
 }
