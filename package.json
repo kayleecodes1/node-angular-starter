@@ -20,6 +20,7 @@
     "gulp-jshint": "^1.7.1",
     "path": "^0.4.9",
     "run-sequence": "^0.3.6",
+    "gulp-ngmin": "^0.3.0",
     "gulp-html2js": "^0.1.0",
     "gulp-minify-html": "^0.1.4",
     "gulp-css-rebase-urls": "0.0.5",
@@ -33,7 +34,6 @@
     "gulp-gzip": "0.0.8"
   },
   "dependencies": {
-    "gulp-ngmin": "^0.3.0",
     "express": "^4.6.1"
   }
 }
