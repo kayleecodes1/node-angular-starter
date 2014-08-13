@@ -20,7 +20,7 @@ var gulp = require('gulp'),
     html2js = require('gulp-html2js'),
     minifyHTML = require('gulp-minify-html'),
     gzip = require('gulp-gzip'),
-    size = require('gulp-filesize'),
+    size = require('gulp-size'),
     runSequence = require('run-sequence'),
     watch = require('gulp-watch'),
     changed = require('gulp-changed'),
@@ -201,7 +201,7 @@ gulp.task('compile-assets', function () {
         }));
 
     return merge( bowerAssets, appAssets )
-        .pipe(size())
+        .pipe(size({ title: 'Compiled Assets' }))
         .pipe(gulp.dest(cfg.compile_dir + '/assets'));
 });
 
@@ -221,7 +221,7 @@ gulp.task('compile-css', function () {
         .pipe(concat(pkg.name + '-' + pkg.version + '.min.css'))
         .pipe(minifyCSS({ keepSpecialComments: 0 }))
         .pipe(gzip({ append: false }))
-        .pipe(size())
+        .pipe(size({ title: 'Compiled CSS', gzip: true }))
         .pipe(gulp.dest(cfg.compile_dir));
 
 });
@@ -251,7 +251,7 @@ gulp.task('compile-js', ['compile-lint'], function () {
         .pipe(concat(pkg.name + '-' + pkg.version + '.min.js'))
         .pipe(uglify({mangle: false}))
         .pipe(gzip({ append: false }))
-        .pipe(size())
+        .pipe(size({ title: 'Compiled JS', gzip: true }))
         .pipe(gulp.dest(cfg.compile_dir));
 });
 
