@@ -5,7 +5,7 @@ var cfg = require('../build.config.js');
 
 var app = express(),
     port = parseInt( process.env.PORT, 10 ) || 3000,
-    isDev = false;
+    isDev = true;
 
 // Set up the static directory.
 var public_dir = path.join( __dirname, '..' );

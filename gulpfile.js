@@ -112,7 +112,7 @@ gulp.task('build-index', function () {
 
     return gulp.src( cfg.source_files.html.index )
         .pipe( inject( merge( vendorCSS, vendorJS ), { addPrefix: 'vendor', addRootSlash: false, starttag: '<!-- inject:vendor:{{ext}} -->' } ))
-        .pipe( inject( merge( appCSS, appJS ), { ignorePath: cfg.build_dir, addRootSlash: false } ))
+        .pipe( inject( merge( appCSS, appJS ), { ignorePath: cfg.build_dir, addRootSlash: false, starttag: '<!-- inject:app:{{ext}} -->' } ))
         .pipe(gulp.dest(cfg.build_dir));
 });
 
@@ -220,8 +220,8 @@ gulp.task('compile-css', function () {
     return merge( bowerCSS, appCSS )
         .pipe(concat(pkg.name + '-' + pkg.version + '.min.css'))
         .pipe(minifyCSS({ keepSpecialComments: 0 }))
-        .pipe(gzip({ append: false }))
-        .pipe(size({ title: 'Compiled CSS', gzip: true }))
+        //.pipe(gzip({ append: true }))
+        .pipe(size({ title: 'Compiled CSS'/*, gzip: true*/ }))
         .pipe(gulp.dest(cfg.compile_dir));
 
 });
@@ -250,8 +250,8 @@ gulp.task('compile-js', ['compile-lint'], function () {
     return merge( bowerJS, templateJS, appJS )
         .pipe(concat(pkg.name + '-' + pkg.version + '.min.js'))
         .pipe(uglify({mangle: false}))
-        .pipe(gzip({ append: false }))
-        .pipe(size({ title: 'Compiled JS', gzip: true }))
+        //.pipe(gzip({ append: true }))
+        .pipe(size({ title: 'Compiled JS'/*, gzip: true*/ }))
         .pipe(gulp.dest(cfg.compile_dir));
 });
 
@@ -261,7 +261,8 @@ gulp.task('compile-index', function () {
             gulp.src(cfg.compile_dir + '/**/*.{css,js}', {read: false}),
             {
                 addRootSlash: false,
-                ignorePath: cfg.compile_dir
+                ignorePath: cfg.compile_dir,
+                starttag: '<!-- inject:app:{{ext}} -->'
             }
         ))
         .pipe(minifyHTML({empty: true}))
