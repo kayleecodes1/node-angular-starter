@@ -19,6 +19,7 @@ var gulp = require('gulp'),
     ngMin = require('gulp-ngmin'),
     html2js = require('gulp-html2js'),
     minifyHTML = require('gulp-minify-html'),
+    gzip = require('gulp-gzip'),
     runSequence = require('run-sequence'),
     watch = require('gulp-watch'),
     changed = require('gulp-changed'),
@@ -187,7 +188,7 @@ gulp.task('compile-clean', function () {
     return gulp.src(cfg.compile_dir, {read: false}).pipe(clean());
 });
 
-gulp.task('assets', function () {
+gulp.task('compile-assets', function () {
 
     var bowerAssets = gulp.src(cfg.vendor_files.assets, {cwd: cfg.vendor_dir + '/**'});
 
@@ -202,7 +203,7 @@ gulp.task('assets', function () {
         .pipe(gulp.dest(cfg.compile_dir + '/assets'));
 });
 
-gulp.task('css', function () {
+gulp.task('compile-css', function () {
 
     var bowerCSS = gulp.src(cfg.vendor_files.css, {cwd: cfg.vendor_dir})
         .pipe(rebaseUrls())
@@ -217,18 +218,19 @@ gulp.task('css', function () {
     return merge( bowerCSS, appCSS )
         .pipe(concat(pkg.name + '-' + pkg.version + '.min.css'))
         .pipe(minifyCSS({ keepSpecialComments: 0 }))
+        .pipe(gzip({ append: true }))
         .pipe(gulp.dest(cfg.compile_dir));
 
 });
 
-gulp.task('lint', function () {
+gulp.task('compile-lint', function () {
     
     return gulp.src( cfg.source_files.js.all )
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });
 
-gulp.task('js', ['lint'], function () {
+gulp.task('compile-js', ['compile-lint'], function () {
 
     var bowerJS = gulp.src(cfg.vendor_files.js, {cwd: cfg.vendor_dir});
 
@@ -245,10 +247,11 @@ gulp.task('js', ['lint'], function () {
     return merge( bowerJS, templateJS, appJS )
         .pipe(concat(pkg.name + '-' + pkg.version + '.min.js'))
         .pipe(uglify({mangle: false}))
+        .pipe(gzip({ append: true }))
         .pipe(gulp.dest(cfg.compile_dir));
 });
 
-gulp.task('index', function () {
+gulp.task('compile-index', function () {
     return gulp.src(cfg.source_files.html.index)
         .pipe(inject(
             gulp.src(cfg.compile_dir + '/**/*.{css,js}', {read: false}),
@@ -264,8 +267,8 @@ gulp.task('index', function () {
 gulp.task('compile', function ( cb ) {
     runSequence(
         'compile-clean',
-        ['assets', 'css', 'js'],
-        ['index'],
+        ['compile-assets', 'compile-css', 'compile-js'],
+        ['compile-index'],
         cb
     );
 });
