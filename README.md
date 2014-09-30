@@ -1,3 +1,5 @@
+NOTE: THIS PROJECT IS STILL IN PROGRESS
+
 # Node Angular Starter
 
 Description.
