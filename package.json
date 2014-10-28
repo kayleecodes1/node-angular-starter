@@ -4,6 +4,10 @@
   "description": "A Node / AngularJS boilerplate project.",
   "author": "Kyle Maguire",
   "license": "MIT",
+  "scripts": {
+    "start-dev": "NODE_ENV=development node server/server.js",
+    "start": "NODE_ENV=production node server/server.js"
+  },
   "devDependencies": {
     "gulp": "^3.8.6",
     "gulp-inject": "^0.4.1",

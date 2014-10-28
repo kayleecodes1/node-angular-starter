@@ -19,6 +19,16 @@ $ gulp serve
 
 Finally, open `localhost:3000` in your browser.
 
+## Running the Server
+
+```sh
+npm run start-dev
+```
+
+```sh
+npm start
+```
+
 ## Directory Structure
 
 ```

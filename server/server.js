@@ -4,12 +4,11 @@ var path = require('path'),
 var cfg = require('../build.config.js');
 
 var app = express(),
-    port = parseInt( process.env.PORT, 10 ) || 3000,
-    isDev = true;
+    port = parseInt( process.env.PORT, 10 ) || 3000;
 
 // Set up the static directory.
 var public_dir = path.join( __dirname, '..' );
-if( isDev ) {
+if( process.env.NODE_ENV === 'development' ) {
     public_dir = path.join( public_dir, cfg.build_dir );
 } else {
     public_dir = path.join( public_dir, cfg.compile_dir );
@@ -34,6 +33,6 @@ app.get( '/*', function ( req, res ) {
 //require('./api/whatever')(app);
 
 // Start the server.
-var server = app.listen(port, function () {
-    console.log('Listening on port %d', server.address().port);
+var server = app.listen( port, function () {
+    console.log( 'Listening on port %d in %s mode.', server.address().port, process.env.NODE_ENV );
 });
