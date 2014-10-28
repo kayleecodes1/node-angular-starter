@@ -100,7 +100,7 @@ gulp.task( 'build-lint', function () {
     var appLint = gulp.src( cfg.source_files.js.all )
         .pipe( changed( cfg.build_dir ) )
         .pipe( jshint() )
-        .pipe( jshint.reporter('default') );
+        .pipe( jshint.reporter( 'default' ) );
 
     return appLint;
 });
@@ -178,15 +178,34 @@ gulp.task( 'watch', [ 'build' ], function () {
 // SERVE
 //------------------------------------------------------------------------------
 
-gulp.task( 'serve', [ 'watch' ], function () {
-    nodemon({
-        script: 'server/server.js',
+gulp.task( 'server-lint', function () {
+
+    var serverLint = gulp.src( 'server/**/*' )
+        .pipe( changed( 'server' ) )
+        .pipe( jshint() )
+        .pipe( jshint.reporter( 'default' ) );
+
+    return serverLint;
+});
+
+gulp.task( 'serve', [ /*'server-lint',*/ 'watch' ], function () {
+    return nodemon({
+        script: 'server/index.js',
+        env: { 'npm_config_dev': true, 'npm_config_port': pkg.config.defaultPort },
         watch: 'server/',
-        ext: 'js json'
-    }).on( 'start', function () {
+        ext: 'js json',
+        stdout: false,
+        verbose: false
+    })
+    //.on( 'readable', function () {} )
+    .on( 'start', function () {
         setTimeout( function () {
             livereload.changed();
         }, 2000 );
+    })
+    //.on( 'change', [ 'server-lint' ] )
+    .on( 'restart', function () {
+        console.log( 'Changes to server files detected. Restarting server.' );
     });
 });
 

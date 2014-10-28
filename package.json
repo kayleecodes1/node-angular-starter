@@ -9,7 +9,7 @@
     "defaultPort": 3000
   },
   "scripts": {
-    "start": "node server/server.js"
+    "start": "node server"
   },
   "devDependencies": {
     "gulp-inject": "^0.4.1",
