@@ -1,6 +1,7 @@
 var gulp = require('gulp'),
+    gutil = require('gulp-util'),
     path = require('path'),
-    merge = require('merge-stream'),
+    streamqueue = require('streamqueue'),
     jshint = require('gulp-jshint'),
     clean = require('gulp-clean'),
     imagemin = require('gulp-imagemin'),
@@ -10,15 +11,12 @@ var gulp = require('gulp'),
     urlAdjuster = require('gulp-css-url-adjuster'),
     minifyCSS = require('gulp-minify-css'),
     autoprefix = require('gulp-autoprefixer'),
-    source = require('vinyl-source-stream'),
     inject = require('gulp-inject'),
-    sourcemaps = require('gulp-sourcemaps'),
     concat = require('gulp-concat'),
     uglify = require('gulp-uglify'),
     ngMin = require('gulp-ngmin'),
     html2js = require('gulp-html2js'),
     minifyHTML = require('gulp-minify-html'),
-    gzip = require('gulp-gzip'),
     size = require('gulp-size'),
     runSequence = require('run-sequence'),
     watch = require('gulp-watch'),
@@ -34,91 +32,105 @@ var pkg = require('./package.json'),
 // DEFAULT
 //------------------------------------------------------------------------------
 
-gulp.task('default', ['build','compile']);
+gulp.task( 'default', [ 'build','compile' ] );
 
 
 //------------------------------------------------------------------------------
 // BUILD
 //------------------------------------------------------------------------------
 
-gulp.task('build-clean', function () {
-    return gulp.src(cfg.build_dir, {read: false}).pipe(clean());
+gulp.task( 'build-clean', function () {
+
+    return gulp.src( cfg.build_dir, { read: false } )
+        .pipe( clean() );
 });
 
-gulp.task('build-vendor', function () {
+gulp.task( 'build-vendor', function () {
     
-    var bowerAssets = gulp.src(cfg.vendor_files.assets, {cwd: cfg.vendor_dir + '/**'});
-    var bowerCSS = gulp.src(cfg.vendor_files.css, {cwd: cfg.vendor_dir + '/**'});
-    var bowerJS = gulp.src(cfg.vendor_files.js, {cwd: cfg.vendor_dir + '/**'});
+    var bowerAssets = gulp.src( cfg.vendor_files.assets, { cwd: cfg.vendor_dir + '/**' } );
+    var bowerCSS = gulp.src( cfg.vendor_files.css, { cwd: cfg.vendor_dir + '/**' } );
+    var bowerJS = gulp.src( cfg.vendor_files.js, { cwd: cfg.vendor_dir + '/**' } );
 
-    return merge( bowerAssets, bowerCSS, bowerJS )
-        .pipe(gulp.dest(cfg.build_dir + '/vendor'));
+    return streamqueue( { objectMode: true }, bowerAssets, bowerCSS, bowerJS )
+        .pipe( gulp.dest( cfg.build_dir + '/vendor' ) );
 });
 
-gulp.task('build-assets', function () {
+gulp.task( 'build-assets', function () {
 
-    return gulp.src(cfg.source_files.assets)
+    var appAssets = gulp.src(cfg.source_files.assets)
         .pipe(changed(cfg.build_dir + '/assets'))
         .pipe(gulp.dest(cfg.build_dir + '/assets'));
+
+    return appAssets;
 });
 
-gulp.task('build-css', function () {
+gulp.task( 'build-css', function () {
 
-    return gulp.src( cfg.source_files.less.all )
+    var appCSS = gulp.src( cfg.source_files.less.all )
         //.pipe(changed(cfg.build_dir))
-        .pipe(sourcemaps.init())
-        .pipe(less({
+        .pipe( less({
             paths: [ path.join( __dirname, 'less', 'includes' ) ]
         }))
-        .pipe(autoprefix('last 2 versions'))
-        .pipe(concat(pkg.name + '-' + pkg.version + '.css'))
-        .pipe(sourcemaps.write())
-        .pipe(gulp.dest(cfg.build_dir));
+        .on( 'error', function ( err ) {
+            gutil.log( err.message );
+            appCSS.end();
+        })
+        .pipe( autoprefix( 'last 2 versions' ) )
+        .pipe( concat( pkg.name + '-' + pkg.version + '.css' ) )
+        .pipe( gulp.dest( cfg.build_dir ) );
+
+    return appCSS;
 });
 
-gulp.task('build-templates', function () {
+gulp.task( 'build-templates', function () {
 
-    gulp.src( cfg.source_files.html.tpl )
-        .pipe(html2js({
+    var appTemplates = gulp.src( cfg.source_files.html.tpl )
+        .pipe( html2js({
             base: 'src',
             outputModuleName: 'appTemplates'
         }))
-        .pipe( concat(pkg.name + '-' + pkg.version + '-templates.js') )
+        .pipe( concat( pkg.name + '-' + pkg.version + '-templates.js' ) )
+        .pipe( gulp.dest( cfg.build_dir ) );
+
+    return appTemplates;
+});
+
+gulp.task( 'build-lint', function () {
+
+    var appLint = gulp.src( cfg.source_files.js.all )
+        .pipe( changed( cfg.build_dir ) )
+        .pipe( jshint() )
+        .pipe( jshint.reporter('default') );
+
+    return appLint;
+});
+
+gulp.task( 'build-js', [ 'build-lint' ], function () {
+
+    var appJS = gulp.src( cfg.source_files.js.all )
+        .pipe( changed( cfg.build_dir ) )
+        .pipe( gulp.dest( cfg.build_dir ) );
+
+    return appJS;
+});
+
+gulp.task( 'build-index', function () {
+
+    var vendorCSS = gulp.src( cfg.vendor_files.css, { cwd: path.join( __dirname, cfg.build_dir, 'vendor' ), read: false } );
+    var vendorJS = gulp.src( cfg.vendor_files.js, { cwd: path.join( __dirname, cfg.build_dir, 'vendor' ), read: false } );
+    var appCSS = gulp.src( [ cfg.build_dir + '/**/*.css', '!' + cfg.build_dir + '/vendor/**/*' ], { read: false } );
+    var appJS = gulp.src( [ cfg.build_dir + '/**/*.js', '!' + cfg.build_dir + '/vendor/**/*' ], { read: false } );
+
+    return gulp.src( cfg.source_files.html.index )
+        .pipe( inject( streamqueue( { objectMode: true }, vendorCSS, vendorJS ), { addPrefix: 'vendor', addRootSlash: false, starttag: '<!-- inject:vendor:{{ext}} -->' } ) )
+        .pipe( inject( streamqueue( { objectMode: true }, appCSS, appJS ), { ignorePath: cfg.build_dir, addRootSlash: false, starttag: '<!-- inject:app:{{ext}} -->' } ) )
         .pipe( gulp.dest( cfg.build_dir ) );
 });
 
-gulp.task('build-lint', function () {
-
-    return gulp.src( cfg.source_files.js.all )
-        .pipe(changed(cfg.build_dir))
-        .pipe(jshint())
-        .pipe(jshint.reporter('default'));
-});
-
-gulp.task('build-js', ['build-lint'], function () {
-
-    return gulp.src( cfg.source_files.js.all )
-        .pipe(changed(cfg.build_dir))
-        .pipe(gulp.dest(cfg.build_dir));
-});
-
-gulp.task('build-index', function () {
-
-    var vendorCSS = gulp.src( cfg.vendor_files.css, {cwd: path.join(__dirname, cfg.build_dir, 'vendor'), read: false} );
-    var vendorJS = gulp.src( cfg.vendor_files.js, {cwd: path.join(__dirname, cfg.build_dir, 'vendor'), read: false} );
-    var appCSS = gulp.src([cfg.build_dir + '/**/*.css', '!' + cfg.build_dir + '/vendor/**/*'], {read: false});
-    var appJS = gulp.src([cfg.build_dir + '/**/*.js', '!' + cfg.build_dir + '/vendor/**/*'], {read: false});
-
-    return gulp.src( cfg.source_files.html.index )
-        .pipe( inject( merge( vendorCSS, vendorJS ), { addPrefix: 'vendor', addRootSlash: false, starttag: '<!-- inject:vendor:{{ext}} -->' } ))
-        .pipe( inject( merge( appCSS, appJS ), { ignorePath: cfg.build_dir, addRootSlash: false, starttag: '<!-- inject:app:{{ext}} -->' } ))
-        .pipe(gulp.dest(cfg.build_dir));
-});
-
-gulp.task('build', function ( cb ) {
+gulp.task( 'build', function ( cb ) {
     runSequence(
         'build-clean',
-        ['build-vendor', 'build-assets', 'build-css', 'build-templates', 'build-js'],
+        [ 'build-vendor', 'build-assets', 'build-css', 'build-templates', 'build-js' ],
         'build-index',
         cb
     );
@@ -129,36 +141,36 @@ gulp.task('build', function ( cb ) {
 // WATCH
 //------------------------------------------------------------------------------
 
-gulp.task('watch', ['build'], function () {
+gulp.task( 'watch', [ 'build' ], function () {
 
     livereload.listen();
     
-    gulp.watch(cfg.source_files.assets, ['build-assets'])
-    .on('change', function ( event ) {
+    gulp.watch( cfg.source_files.assets, [ 'build-assets' ] )
+    .on( 'change', function ( event ) {
         if( event.type === 'renamed' || event.type === 'deleted' ) {
-            var pathParts = (event.old || event.path).split(path.sep);
-            var deletePath = pathParts.slice(pathParts.indexOf('src') + 1).join(path.sep);
-            gulp.src(deletePath, {cwd: cfg.build_dir}).pipe(clean());
+            var pathParts = ( event.old || event.path ).split( path.sep );
+            var deletePath = pathParts.slice( pathParts.indexOf( 'src' ) + 1 ).join( path.sep );
+            gulp.src( deletePath, { cwd: cfg.build_dir } ).pipe( clean() );
         }
     });
-    gulp.watch(cfg.source_files.less.all, ['build-css']);
-    gulp.watch(cfg.source_files.html.tpl, ['build-templates']);
-    gulp.watch(cfg.source_files.js.all, [])
-    .on('change', function ( event ) {
+    gulp.watch( cfg.source_files.less.all, [ 'build-css' ] );
+    gulp.watch( cfg.source_files.html.tpl, [ 'build-templates' ] );
+    gulp.watch( cfg.source_files.js.all, [] )
+    .on( 'change', function ( event ) {
         if( event.type === 'added' || event.type === 'renamed' || event.type === 'deleted' ) {
             if( event.type === 'renamed' || event.type === 'deleted' ) {
-                var pathParts = (event.old || event.path).split(path.sep);
-                var deletePath = pathParts.slice(pathParts.indexOf('src') + 1).join(path.sep);
-                gulp.src(deletePath, {cwd: cfg.build_dir}).pipe(clean());
+                var pathParts = ( event.old || event.path ).split( path.sep );
+                var deletePath = pathParts.slice( pathParts.indexOf( 'src' ) + 1 ).join( path.sep );
+                gulp.src( deletePath, { cwd: cfg.build_dir } ).pipe( clean() );
             }
-            runSequence( 'build-js', 'build-index', function(){} );
+            runSequence( 'build-js', 'build-index', function () {} );
         } else {
-            runSequence( 'build-js', function(){} );
+            runSequence( 'build-js', function () {} );
         }
     });
-    gulp.watch(cfg.source_files.html.index, ['build-index']);
+    gulp.watch( cfg.source_files.html.index, [ 'build-index' ] );
 
-    gulp.watch(cfg.build_dir + '/**/*', livereload.changed);
+    gulp.watch( cfg.build_dir + '/**/*', livereload.changed );
 });
 
 
@@ -166,15 +178,15 @@ gulp.task('watch', ['build'], function () {
 // SERVE
 //------------------------------------------------------------------------------
 
-gulp.task('serve', ['watch'], function () {
+gulp.task( 'serve', [ 'watch' ], function () {
     nodemon({
         script: 'server/server.js',
         watch: 'server/',
         ext: 'js json'
-    }).on('start', function () {
+    }).on( 'start', function () {
         setTimeout( function () {
             livereload.changed();
-        }, 2000);
+        }, 2000 );
     });
 });
 
@@ -184,95 +196,104 @@ gulp.task('serve', ['watch'], function () {
 //------------------------------------------------------------------------------
 
 // Clear the compile directory.
-gulp.task('compile-clean', function () {
-    return gulp.src(cfg.compile_dir, {read: false}).pipe(clean());
+gulp.task( 'compile-clean', function () {
+    
+    return gulp.src( cfg.compile_dir, { read: false } )
+        .pipe( clean() );
 });
 
-gulp.task('compile-assets', function () {
+gulp.task( 'compile-assets', function () {
 
-    var bowerAssets = gulp.src(cfg.vendor_files.assets, {cwd: cfg.vendor_dir + '/**'});
+    var bowerAssets = gulp.src( cfg.vendor_files.assets, { cwd: cfg.vendor_dir + '/**' } );
 
-    var appAssets = gulp.src(cfg.source_files.assets)
-        .pipe( imagemin( {
+    var appAssets = gulp.src( cfg.source_files.assets )
+        .pipe( imagemin({
             progressive: true,
             svgoPlugins: [ { removeViewBox: false } ],
             use: [ pngcrush() ]
         }));
 
-    return merge( bowerAssets, appAssets )
-        .pipe(size({ title: 'Compiled Assets' }))
-        .pipe(gulp.dest(cfg.compile_dir + '/assets'));
+    return streamqueue( { objectMode: true }, bowerAssets, appAssets )
+        .pipe( size( { title: 'Compiled Assets' } ) )
+        .pipe( gulp.dest( cfg.compile_dir + '/assets' ) );
 });
 
-gulp.task('compile-css', function () {
+gulp.task( 'compile-css', function () {
 
-    var bowerCSS = gulp.src(cfg.vendor_files.css, {cwd: cfg.vendor_dir})
-        .pipe(rebaseUrls())
-        .pipe(urlAdjuster({prepend: 'assets/'}));
+    var bowerCSS = gulp.src( cfg.vendor_files.css, { cwd: cfg.vendor_dir } )
+        .pipe( rebaseUrls() )
+        .pipe( urlAdjuster( { prepend: 'assets/' } ) );
 
     var appCSS = gulp.src( cfg.source_files.less.all ) 
-        .pipe(less({
+        .pipe( less({
             paths: [ path.join( __dirname, 'less', 'includes' ) ]
         }))
-        .pipe(autoprefix('last 2 versions'));
+        .on( 'error', function ( err ) {
+            gutil.log( err.message );
+            appCSS.end();
+        })
+        .pipe( autoprefix( 'last 2 versions' ) );
 
-    return merge( bowerCSS, appCSS )
-        .pipe(concat(pkg.name + '-' + pkg.version + '.min.css'))
-        .pipe(minifyCSS({ keepSpecialComments: 0 }))
-        //.pipe(gzip({ append: true }))
-        .pipe(size({ title: 'Compiled CSS'/*, gzip: true*/ }))
-        .pipe(gulp.dest(cfg.compile_dir));
+    return streamqueue( { objectMode: true }, bowerCSS, appCSS )
+        .pipe( concat( pkg.name + '-' + pkg.version + '.min.css' ) )
+        .pipe( minifyCSS( { keepSpecialComments: 0 } ) )
+        .pipe( size( { title: 'Compiled CSS' } ) )
+        .pipe( gulp.dest( cfg.compile_dir ) );
 
 });
 
-gulp.task('compile-lint', function () {
+gulp.task( 'compile-lint', function () {
     
-    return gulp.src( cfg.source_files.js.all )
-        .pipe(jshint())
-        .pipe(jshint.reporter('default'));
+    var appLint = gulp.src( cfg.source_files.js.all )
+        .pipe( jshint() )
+        .pipe( jshint.reporter( 'default' ) );
+
+    return appLint;
 });
 
-gulp.task('compile-js', ['compile-lint'], function () {
+gulp.task( 'compile-js', [ 'compile-lint' ], function () {
 
-    var bowerJS = gulp.src(cfg.vendor_files.js, {cwd: cfg.vendor_dir});
+    var bowerJS = gulp.src( cfg.vendor_files.js, { cwd: cfg.vendor_dir } );
 
     var templateJS = gulp.src( cfg.source_files.html.tpl )
-        .pipe(minifyHTML({empty: true}))
-        .pipe(html2js({
+        .pipe( minifyHTML( { empty: true } ) )
+        .pipe( html2js({
             base: 'src',
             outputModuleName: 'appTemplates'
         }));
 
     var appJS = gulp.src( cfg.source_files.js.all )
-        .pipe(ngMin());
+        .pipe( ngMin() );
 
-    return merge( bowerJS, templateJS, appJS )
-        .pipe(concat(pkg.name + '-' + pkg.version + '.min.js'))
-        .pipe(uglify({mangle: false}))
-        //.pipe(gzip({ append: true }))
-        .pipe(size({ title: 'Compiled JS'/*, gzip: true*/ }))
-        .pipe(gulp.dest(cfg.compile_dir));
+    return streamqueue( { objectMode: true }, bowerJS, templateJS, appJS )
+        .pipe( concat( pkg.name + '-' + pkg.version + '.min.js' ) )
+        .pipe( uglify( { mangle: false } ) )
+        .pipe( size( { title: 'Compiled JS' } ) )
+        .pipe( gulp.dest( cfg.compile_dir ) );
 });
 
-gulp.task('compile-index', function () {
-    return gulp.src(cfg.source_files.html.index)
-        .pipe(inject(
-            gulp.src(cfg.compile_dir + '/**/*.{css,js}', {read: false}),
+gulp.task( 'compile-index', function () {
+
+    var appIndex = gulp.src( cfg.source_files.html.index )
+        .pipe( inject(
+            gulp.src( cfg.compile_dir + '/**/*.{css,js}', { read: false } ),
             {
                 addRootSlash: false,
                 ignorePath: cfg.compile_dir,
                 starttag: '<!-- inject:app:{{ext}} -->'
             }
         ))
-        .pipe(minifyHTML({empty: true}))
-        .pipe(gulp.dest(cfg.compile_dir));
+        .pipe( minifyHTML( { empty: true } ) )
+        .pipe( gulp.dest( cfg.compile_dir ) );
+
+    return appIndex;
 });
 
-gulp.task('compile', function ( cb ) {
+gulp.task( 'compile', function ( cb ) {
     runSequence(
         'compile-clean',
-        ['compile-assets', 'compile-css', 'compile-js'],
-        ['compile-index'],
+        [ 'compile-assets', 'compile-css', 'compile-js' ],
+        [ 'compile-index' ],
         cb
     );
 });

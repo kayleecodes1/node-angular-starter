@@ -1,8 +1,5 @@
 module.exports = {
 
-    build_dir: 'build',
-    compile_dir: 'dist',
-
     vendor_dir: 'vendor',
     vendor_files: {
         assets: [
@@ -10,14 +7,14 @@ module.exports = {
             'components-font-awesome/fonts/**/*'
         ],
         css: [
-            'bootstrap-css-only/css/bootstrap.min.css',
-            'bootstrap-css-only/css/bootstrap-theme.min.css',
-            'components-font-awesome/css/font-awesome.min.css'
+            'bootstrap-css-only/css/bootstrap.css',
+            'bootstrap-css-only/css/bootstrap-theme.css',
+            'components-font-awesome/css/font-awesome.css'
         ],
         js: [
-            'angular/angular.min.js',
-            'angular-ui-router/release/angular-ui-router.min.js',
-            'angular-bootstrap/ui-bootstrap-tpls.min.js'
+            'angular/angular.js',
+            'angular-ui-router/release/angular-ui-router.js',
+            'angular-bootstrap/ui-bootstrap-tpls.js'
         ]
     },
 
@@ -34,5 +31,8 @@ module.exports = {
         js: {
             all: 'src/**/*.js'
         }
-    }
+    },
+
+    build_dir: 'build',
+    compile_dir: 'dist'
 };
