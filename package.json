@@ -4,9 +4,11 @@
   "description": "A Node / AngularJS boilerplate project.",
   "author": "Kyle Maguire",
   "license": "MIT",
+  "config": {
+    "defaultPort": 3000
+  },
   "scripts": {
-    "start-dev": "NODE_ENV=development node server/server.js",
-    "start": "NODE_ENV=production node server/server.js"
+    "start": "node server/server.js"
   },
   "devDependencies": {
     "gulp": "^3.8.6",

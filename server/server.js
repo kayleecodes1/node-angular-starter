@@ -4,11 +4,12 @@ var path = require('path'),
 var cfg = require('../build.config.js');
 
 var app = express(),
-    port = parseInt( process.env.PORT, 10 ) || 3000;
+    environment = process.env.npm_config_dev ? 'development' : 'production',
+    port = process.env.npm_config_port || process.env.npm_package_config_defaultPort;
 
 // Set up the static directory.
 var public_dir = path.join( __dirname, '..' );
-if( process.env.NODE_ENV === 'development' ) {
+if( environment === 'development' ) {
     public_dir = path.join( public_dir, cfg.build_dir );
 } else {
     public_dir = path.join( public_dir, cfg.compile_dir );
@@ -34,5 +35,5 @@ app.get( '/*', function ( req, res ) {
 
 // Start the server.
 var server = app.listen( port, function () {
-    console.log( 'Listening on port %d in %s mode.', server.address().port, process.env.NODE_ENV );
+    console.log( 'Listening in %s mode on port %d.', environment, server.address().port );
 });
