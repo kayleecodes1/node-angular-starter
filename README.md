@@ -1,22 +1,26 @@
-NOTE: THIS PROJECT IS STILL UNDER HEAVY DEVELOPMENT
-
 # Node Angular Starter
 
-I created this as a base for any project that uses a Node.js / Express backend and an AngularJS frontend. I wanted a build process that took care of all the difficult things for me and just let me do my work.
+I created this as a base for any project that uses an AngularJS frontend and a Node.js / Express backend.
 
-//TODO: more description
+The main goal of this project is to employ a build process that functions elegantly in development without getting in the way and then smoothly transitions into a tightly packed and efficient production package.
 
-## Setting Up
+The other goal of this project is to structure application source files in a logical and organized way.
+
+I will discuss the means to these goals further in the sections below.
+
+## Setup
+
+### Initial Steps
 
 Install [Node.js](http://nodejs.org/).
 
-Install [Bower](http://bower.io/) and [Gulp](http://gulpjs.com/) globally:
+Install [Bower](http://bower.io/) and [Gulp](http://gulpjs.com/) globally.
 
 ```sh
 $ sudo npm -g install bower gulp
 ```
 
-Clone the Git repository and install the dependencies:
+Clone the Git repository and install the dependencies.
 
 ```sh
 $ git clone git://github.com/kylepixel/node-angular-starter
@@ -25,53 +29,42 @@ $ npm install
 $ bower install
 ```
 
-Now everything's set up and ready to go. Check the sections below for how to build the project and run the server.
+Now everything's set up and ready to go. Read on for how to build the project and run the server.
 
-## Build Process
+### Build Process
 
-This project uses Gulp for its build process and has a number of commands. The following command will build the project for production. This means concatenating and minifying all source files into a single JS file and a single CSS file, as well as compressing image assets:
+This project uses Gulp for its build process and has a number of gulp tasks.
+
+The compile command will build the project for production. This means concatenating and minifying all source files into a single JS file and a single CSS file, as well as compressing image assets. The default Gulp command also runs the compile task and is exactly equivalent.
 
 ```sh
 $ gulp compile
 ```
-
-The default Gulp command also runs the compile task and is exactly equivalent to the above:
-
 ```sh
 $ gulp
 ```
 
-The following command will build the project for development. This means that all files will be kept separate (except for CSS) and will remain untouched.
+The build command will build the project for development. This means that all files will be kept separate (except for CSS) and will remain untouched for easy debugging and analysis.
 
 ```sh
 $ gulp build
 ```
 
-//TODO
+The watch command will run a build and then watch the application files for changes. Whenever changes are made, the build files will be updated appropriately.
 
 ```sh
 $ gulp watch
 ```
 
-//TODO
+The serve command will run a build and watch the application files for changes. Whenever changes are made, the build files will be updated appropriately. Additionally, it will watch the server files for changes. Whenever changes are made, the server will restart itself.
 
 ```sh
 $ gulp serve
 ```
 
-//TODO
+//TODO: explanation of when to use these commands
 
-### Build Configuration
-
-The `build.config.js` file in the project root contains configurable properties that are used in the project's build process. These properties will be reviewed here.
-
-`vendor_dir`: The directory in whic
-`vendor_files`: .
-
-`build_dir`: 
-`compile_dir`: 
-
-## Running the Server
+### Running the Server
 
 The server can be started with the following command:
 
@@ -124,6 +117,18 @@ everything should work.
 
 ## Making Changes
 
+### Notes
+
 //- new bower file, add to vendor_files on build.config.js
 //- all LESS files derived from source_files.less.entry, anything not here or imported will not be included
 //- module dependencies are important
+
+### Build Configuration
+
+The `build.config.js` file in the project root contains configurable properties that are used in the project's build process. These properties will be reviewed here.
+
+`vendor_dir`: The directory in whic
+`vendor_files`: .
+
+`build_dir`: 
+`compile_dir`: 
