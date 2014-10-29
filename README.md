@@ -14,13 +14,13 @@ I will discuss the means to these goals further in the sections below.
 
 Install [Node.js](http://nodejs.org/).
 
-Install [Bower](http://bower.io/) and [Gulp](http://gulpjs.com/) globally.
+Install [Bower](http://bower.io/) and [Gulp](http://gulpjs.com/) globally:
 
 ```sh
 $ sudo npm -g install bower gulp
 ```
 
-Clone the Git repository and install the dependencies.
+Clone the Git repository and install the dependencies:
 
 ```sh
 $ git clone git://github.com/kylepixel/node-angular-starter
@@ -33,9 +33,9 @@ Now everything's set up and ready to go. Read on for how to build the project an
 
 ### Build Process
 
-This project uses Gulp for its build process and has a number of gulp tasks.
+This project uses Gulp for its build process and has a number of Gulp tasks available.
 
-The compile command will build the project for production. This means concatenating and minifying all source files into a single JS file and a single CSS file, as well as compressing image assets. The default Gulp command also runs the compile task and is exactly equivalent.
+The compile task will build the project for production. This means concatenating and minifying all source files into a single JS file and a single CSS file, as well as compressing image assets. The default Gulp task also runs the compile task and is exactly equivalent:
 
 ```sh
 $ gulp compile
@@ -44,29 +44,29 @@ $ gulp compile
 $ gulp
 ```
 
-The build command will build the project for development. This means that all files will be kept separate (except for CSS) and will remain untouched for easy debugging and analysis.
+The build task will build the project for development. This means that all files will be kept separate (CSS is a special case and will be concatenated into a single file) and will remain untouched for a quick build and easy debugging and analysis:
 
 ```sh
 $ gulp build
 ```
 
-The watch command will run a build and then watch the application files for changes. Whenever changes are made, the build files will be updated appropriately.
+The watch task will run the build task and then watch the application files for changes. Whenever changes are made, the build files will be updated appropriately and live reload will be triggered:
 
 ```sh
 $ gulp watch
 ```
 
-The serve command will run a build and watch the application files for changes. Whenever changes are made, the build files will be updated appropriately. Additionally, it will watch the server files for changes. Whenever changes are made, the server will restart itself.
+The serve task will run the watch task. It will also start the server in development mode on the default port (defined in `package.json`) and then watch the server files for changes. Whenever changes are made, the server will restart itself and live reload will be triggered:
 
 ```sh
 $ gulp serve
 ```
 
-//TODO: explanation of when to use these commands
+//TODO: explanation of when to use these commands?
 
 ### Running the Server
 
-The server can be started with the following command:
+The server can be started manually with the following command:
 
 ```sh
 $ npm start [--dev] [--port=<port>]
