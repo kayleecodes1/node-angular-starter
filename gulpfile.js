@@ -57,9 +57,9 @@ gulp.task( 'build-vendor', function () {
 
 gulp.task( 'build-assets', function () {
 
-    var appAssets = gulp.src(cfg.source_files.assets)
-        .pipe(changed(cfg.build_dir + '/assets'))
-        .pipe(gulp.dest(cfg.build_dir + '/assets'));
+    var appAssets = gulp.src( cfg.source_files.assets )
+        .pipe( changed( cfg.build_dir + '/assets' ) )
+        .pipe( gulp.dest( cfg.build_dir + '/assets' ) );
 
     return appAssets;
 });
@@ -171,6 +171,8 @@ gulp.task( 'watch', [ 'build' ], function () {
     gulp.watch( cfg.source_files.html.index, [ 'build-index' ] );
 
     gulp.watch( cfg.build_dir + '/**/*', livereload.changed );
+
+    console.log( 'Watching for changes to application files...' );
 });
 
 
@@ -180,7 +182,7 @@ gulp.task( 'watch', [ 'build' ], function () {
 
 gulp.task( 'server-lint', function () {
 
-    var serverLint = gulp.src( 'server/**/*' )
+    var serverLint = gulp.src( 'server/**/*.{js}' )
         .pipe( changed( 'server' ) )
         .pipe( jshint() )
         .pipe( jshint.reporter( 'default' ) );
@@ -188,24 +190,27 @@ gulp.task( 'server-lint', function () {
     return serverLint;
 });
 
-gulp.task( 'serve', [ /*'server-lint',*/ 'watch' ], function () {
+gulp.task( 'serve', [ 'watch', 'server-lint' ], function () {
+
     return nodemon({
         script: 'server/index.js',
         env: { 'npm_config_dev': true, 'npm_config_port': pkg.config.defaultPort },
         watch: 'server/',
         ext: 'js json',
-        stdout: false,
-        verbose: false
+        //stdout: false,
+        //stderr: false,
+        //verbose: false
     })
     //.on( 'readable', function () {} )
     .on( 'start', function () {
+        console.log( 'Watching for changes to server files...' );
+    })
+    .on( 'change', [ 'server-lint' ] )
+    .on( 'restart', function () {
+        console.log( 'Changes to server files detected. Restarting server.' );
         setTimeout( function () {
             livereload.changed();
         }, 2000 );
-    })
-    //.on( 'change', [ 'server-lint' ] )
-    .on( 'restart', function () {
-        console.log( 'Changes to server files detected. Restarting server.' );
     });
 });
 
