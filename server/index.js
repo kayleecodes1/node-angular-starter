@@ -1,6 +1,7 @@
 var path = require('path'),
     express = require('express'),
-    ecstatic = require('ecstatic');
+    ecstatic = require('ecstatic'),
+    favicon = require('serve-favicon');
 
 var cfg = require('../build.config.js');
 
@@ -17,18 +18,16 @@ if( environment === 'development' ) {
 } else {
     publicDir = path.join( publicDir, cfg.compile_dir );
 }
-// Use Ecstatic to serve public files with gzip if supported.
+
+// Use Ecstatic to serve static files.
 app.use( ecstatic( { root: publicDir, gzip: true } ) );
+
+// Favicon.
+app.use( favicon( path.join( publicDir, 'assets', 'favicon.ico' ) ) );
 
 // Index.
 app.get( '/', function ( req, res ) {
-    res.redirect( publicDir + '/index.html' );
-});
-
-// 404.
-app.get( '/*', function ( req, res ) {
-    res.status( 404 );
-    res.render( publicDir + '/#/404', 404 );
+    res.redirect( path.join( publicDir, 'index.html' ) );
 });
 
 //TODO:serve favicon

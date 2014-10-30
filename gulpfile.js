@@ -10,6 +10,7 @@ var gulp = require('gulp'),
     rebaseUrls = require('gulp-css-rebase-urls'),
     urlAdjuster = require('gulp-css-url-adjuster'),
     minifyCSS = require('gulp-minify-css'),
+    sourcemaps = require('gulp-sourcemaps'),
     autoprefix = require('gulp-autoprefixer'),
     inject = require('gulp-inject'),
     concat = require('gulp-concat'),
@@ -69,6 +70,7 @@ gulp.task( 'build-css', function () {
 
     var appCSS = gulp.src( cfg.source_files.less.all )
         //.pipe(changed(cfg.build_dir))
+        .pipe( sourcemaps.init() )
         .pipe( less({
             paths: [ path.join( __dirname, 'less', 'includes' ) ]
         }))
@@ -78,6 +80,7 @@ gulp.task( 'build-css', function () {
         })
         .pipe( autoprefix( 'last 2 versions' ) )
         .pipe( concat( pkg.name + '-' + pkg.version + '.css' ) )
+        .pipe( sourcemaps.write() )
         .pipe( gulp.dest( cfg.build_dir ) );
 
     return appCSS;
