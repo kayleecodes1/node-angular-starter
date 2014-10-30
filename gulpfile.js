@@ -14,7 +14,7 @@ var gulp = require('gulp'),
     inject = require('gulp-inject'),
     concat = require('gulp-concat'),
     uglify = require('gulp-uglify'),
-    ngMin = require('gulp-ngmin'),
+    ngAnnotate = require('gulp-ng-annotate'),
     html2js = require('gulp-html2js'),
     minifyHTML = require('gulp-minify-html'),
     size = require('gulp-size'),
@@ -287,11 +287,11 @@ gulp.task( 'compile-js', [ 'compile-lint' ], function () {
         }));
 
     var appJS = gulp.src( cfg.source_files.js.all )
-        .pipe( ngMin() );
+        .pipe( ngAnnotate() );
 
     return streamqueue( { objectMode: true }, bowerJS, templateJS, appJS )
         .pipe( concat( pkg.name + '-' + pkg.version + '.min.js' ) )
-        .pipe( uglify( { mangle: false } ) )
+        .pipe( uglify() )
         .pipe( size( { title: 'Compiled JS' } ) )
         .pipe( gulp.dest( cfg.compile_dir ) );
 });
