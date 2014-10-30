@@ -17,6 +17,7 @@ var gulp = require('gulp'),
     ngAnnotate = require('gulp-ng-annotate'),
     html2js = require('gulp-html2js'),
     minifyHTML = require('gulp-minify-html'),
+    gzip = require('gulp-gzip'),
     size = require('gulp-size'),
     runSequence = require('run-sequence'),
     watch = require('gulp-watch'),
@@ -261,7 +262,10 @@ gulp.task( 'compile-css', function () {
     return streamqueue( { objectMode: true }, bowerCSS, appCSS )
         .pipe( concat( pkg.name + '-' + pkg.version + '.min.css' ) )
         .pipe( minifyCSS( { keepSpecialComments: 0 } ) )
+        .pipe( gulp.dest( cfg.compile_dir ) )
         .pipe( size( { title: 'Compiled CSS' } ) )
+        .pipe( gzip( { append: true } ) )
+        .pipe( size( { title: 'Compiled CSS (gzipped)' } ) )
         .pipe( gulp.dest( cfg.compile_dir ) );
 
 });
@@ -292,7 +296,10 @@ gulp.task( 'compile-js', [ 'compile-lint' ], function () {
     return streamqueue( { objectMode: true }, bowerJS, templateJS, appJS )
         .pipe( concat( pkg.name + '-' + pkg.version + '.min.js' ) )
         .pipe( uglify() )
+        .pipe( gulp.dest( cfg.compile_dir ) )
         .pipe( size( { title: 'Compiled JS' } ) )
+        .pipe( gzip( { append: true } ) )
+        .pipe( size( { title: 'Compiled JS (gzipped)' } ) )
         .pipe( gulp.dest( cfg.compile_dir ) );
 });
 
@@ -308,6 +315,8 @@ gulp.task( 'compile-index', function () {
             }
         ))
         .pipe( minifyHTML( { empty: true } ) )
+        .pipe( gulp.dest( cfg.compile_dir ) )
+        .pipe( gzip( { append: true } ) )
         .pipe( gulp.dest( cfg.compile_dir ) );
 
     return appIndex;

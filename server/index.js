@@ -1,5 +1,6 @@
 var path = require('path'),
-    express = require('express');
+    express = require('express'),
+    ecstatic = require('ecstatic');
 
 var cfg = require('../build.config.js');
 
@@ -10,23 +11,24 @@ var app = express(),
     port = parseInt( process.env.npm_config_port, 10 ) || process.env.npm_package_config_defaultPort;
 
 // Set up the static directory.
-var public_dir = path.join( __dirname, '..' );
+var publicDir = path.join( __dirname, '..' );
 if( environment === 'development' ) {
-    public_dir = path.join( public_dir, cfg.build_dir );
+    publicDir = path.join( publicDir, cfg.build_dir );
 } else {
-    public_dir = path.join( public_dir, cfg.compile_dir );
+    publicDir = path.join( publicDir, cfg.compile_dir );
 }
-app.use( express.static( public_dir ) );
+// Use Ecstatic to serve public files with gzip if supported.
+app.use( ecstatic( { root: publicDir, gzip: true } ) );
 
 // Index.
 app.get( '/', function ( req, res ) {
-    res.redirect( public_dir + '/index.html' );
+    res.redirect( publicDir + '/index.html' );
 });
 
 // 404.
 app.get( '/*', function ( req, res ) {
     res.status( 404 );
-    res.render( public_dir + '/#/404', 404 );
+    res.render( publicDir + '/#/404', 404 );
 });
 
 //TODO:serve favicon
