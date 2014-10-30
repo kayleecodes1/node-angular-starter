@@ -235,15 +235,15 @@ gulp.task( 'compile-assets', function () {
     var bowerAssets = gulp.src( cfg.vendor_files.assets, { cwd: cfg.vendor_dir + '/**' } );
 
     var appAssets = gulp.src( cfg.source_files.assets )
+        .pipe( size( { title: 'Source Assets' } ) )
         .pipe( imagemin({
             progressive: true,
             svgoPlugins: [ { removeViewBox: false } ],
             use: [ pngcrush() ]
-        }));
+        }))
+        .pipe( size( { title: 'Minified Assets' } ) );
 
     return streamqueue( { objectMode: true }, bowerAssets, appAssets )
-        .pipe( size( { title: 'Source Assets' } ) )
-        .pipe( size( { title: 'Compiled Assets' } ) )
         .pipe( gulp.dest( cfg.compile_dir + '/assets' ) );
 });
 
