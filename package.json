@@ -12,6 +12,8 @@
     "start": "node server"
   },
   "devDependencies": {
+    "gulp": "^3.8.9",
+    "gulp-util": "^3.0.1",
     "gulp-inject": "^0.4.1",
     "gulp-livereload": "^2.1.0",
     "gulp-autoprefixer": "0.0.8",
@@ -23,7 +25,6 @@
     "gulp-clean": "^0.3.1",
     "gulp-concat": "^2.3.3",
     "gulp-jshint": "^1.7.1",
-    "path": "^0.4.9",
     "run-sequence": "^0.3.6",
     "gulp-ngmin": "^0.3.0",
     "gulp-html2js": "^0.1.0",
@@ -37,11 +38,9 @@
     "merge-stream": "^0.1.5",
     "gulp-size": "^1.0.0",
     "streamqueue": "^0.1.1",
-    "gulp-util": "^3.0.1",
     "gulp-css-url-adjuster": "^0.2.2"
   },
   "dependencies": {
-    "path": "^0.4.9",
     "express": "^4.6.1"
   }
 }
