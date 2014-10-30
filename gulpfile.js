@@ -239,6 +239,7 @@ gulp.task( 'compile-assets', function () {
         }));
 
     return streamqueue( { objectMode: true }, bowerAssets, appAssets )
+        .pipe( size( { title: 'Source Assets' } ) )
         .pipe( size( { title: 'Compiled Assets' } ) )
         .pipe( gulp.dest( cfg.compile_dir + '/assets' ) );
 });
@@ -260,6 +261,7 @@ gulp.task( 'compile-css', function () {
         .pipe( autoprefix( 'last 2 versions' ) );
 
     return streamqueue( { objectMode: true }, bowerCSS, appCSS )
+        .pipe( size( { title: 'Source CSS' } ) )
         .pipe( concat( pkg.name + '-' + pkg.version + '.min.css' ) )
         .pipe( minifyCSS( { keepSpecialComments: 0 } ) )
         .pipe( gulp.dest( cfg.compile_dir ) )
@@ -294,6 +296,7 @@ gulp.task( 'compile-js', [ 'compile-lint' ], function () {
         .pipe( ngAnnotate() );
 
     return streamqueue( { objectMode: true }, bowerJS, templateJS, appJS )
+        .pipe( size( { title: 'Source JS' } ) )
         .pipe( concat( pkg.name + '-' + pkg.version + '.min.js' ) )
         .pipe( uglify() )
         .pipe( gulp.dest( cfg.compile_dir ) )
