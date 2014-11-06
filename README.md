@@ -59,8 +59,10 @@ $ gulp watch
 The serve task will run the watch task. It will also start the server in development mode on the default port (defined in `package.json`) and then watch the server files for changes. Whenever changes are made, the server will restart itself and live reload will be triggered:
 
 ```sh
-$ gulp serve
+$ gulp serve [--port=<port>]
 ```
+
+If the `--port` flag is included with a valid port number, the server will be started on the specified port. Otherwise, it will start on the default port which is defined in the config section of `package.json`.
 
 //TODO: explanation of when to use these commands?
 
