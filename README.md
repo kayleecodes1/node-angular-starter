@@ -64,7 +64,7 @@ $ gulp serve [--port=<port>]
 
 If the `--port` flag is included with a valid port number, the server will be started on the specified port. Otherwise, it will start on the default port which is defined in the config section of `package.json`.
 
-//TODO: explanation of when to use these commands?
+<!-- TODO: explanation of when to use these commands -->
 
 ### Running the Server
 
@@ -78,9 +78,21 @@ If the `--dev` flag is included, the server will be started in development mode 
 
 If the `--port` flag is included with a valid port number, the server will be started on the specified port. Otherwise, it will start on the default port which is defined in the config section of `package.json`.
 
+### Live Reload
+
+`node-angular-starter` also includes [Live Reload](http://livereload.com/). Download the addon for your browser at the following locations:
+
+- Chrome - [Chrome Webstore](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei)
+- Firefox - [Download from Live Reload](http://download.livereload.com/2.0.8/LiveReload-2.0.8.xpi)
+- Safari - [Download from Live Reload](http://download.livereload.com/2.0.9/LiveReload-2.0.9.safariextz)
+- Internet Explorer - N/A
+
+When you load your page, click the Live Reload icon in your toolbar and
+everything should work.
+
 ## Directory Structure
 
-//TODO
+<!-- TODO -->
 
 ```
 node-angular-starter/
@@ -103,34 +115,32 @@ node-angular-starter/
   |- package.json
 ```
 
-//TODO
-
-### Live Reload
-
-`node-angular-starter` also includes [Live Reload](http://livereload.com/). Download the addon for your browser at the following locations:
-
-- Chrome - [Chrome Webstore](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei)
-- Firefox - [Download from Live Reload](http://download.livereload.com/2.0.8/LiveReload-2.0.8.xpi)
-- Safari - [Download from Live Reload](http://download.livereload.com/2.0.9/LiveReload-2.0.9.safariextz)
-- Internet Explorer - N/A
-
-When you load your page, click the Live Reload icon in your toolbar and
-everything should work.
+<!-- TODO -->
 
 ## Making Changes
 
-### Notes
-
-//- new bower file, add to vendor_files on build.config.js
-//- all LESS files derived from source_files.less.entry, anything not here or imported will not be included
-//- module dependencies are important
+I'm going to outline some important concepts here for making changes to this project.
 
 ### Build Configuration
 
 The `build.config.js` file in the project root contains configurable properties that are used in the project's build process. These properties will be reviewed here.
 
-`vendor_dir`: The directory in whic
-`vendor_files`: .
+`vendor_dir`: The directory to which Bower dependencies are downloaded.
+`vendor_files`: The specific vendor files that should be included in the build process (in order), the starting root of the filepath being the `vendor_dir`.
 
-`build_dir`: 
-`compile_dir`: 
+`source_files`: The source files for the application. You shouldn't need to touch these but they are there for your convenience.
+
+`build_dir`: The directory to which the development version of the project should be built.
+`compile_dir`: The directory to which the production version of the project should be built.
+
+### Notes
+
+If you want to add or remove a Bower dependency in the build, it must be updated in the `vendor_files` section of the build config.
+
+By default, the only less file processed is `source_files.less.entry` in the build config. This defaults to `src/app.less`. I work by making sure all files are linked to this one by @import statements. This also helps reinforce the dependency structure established by the application's JS structure. Feel free to change this however you see fit so that it works for you.
+
+All assets (i.e. images, video, etc.) should be placed in the `src/assets` folder. Feel free to organize them within this folder however you like. The folder structure will be preserved.
+
+Never forget how important module dependencies are. If you add a state or a component, don't forget to add it to the module's dependencies.
+
+I'll let you figure out some of the linking by looking at the example project that's in place. To link assets from the LESS, the URL should just be 'assets/file/path/here.jpg'. Template URLs for new states are the full path from 'src' (not including 'src').
