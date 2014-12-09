@@ -22,7 +22,13 @@ angular.module( 'app', [
     $rootScope.APP_TITLE = APP_TITLE;
 })
 
-.controller( 'AppCtrl', function AppCtrl ( $scope, APP_TITLE ) {
+.controller( 'AppCtrl', function AppCtrl ( $scope, APP_TITLE, APIService ) {
+
+    $scope.userInfo = null;
+    APIService.getUserInfo().then( function ( response ) {
+        $scope.userInfo = response.data;
+        console.log( $scope.userInfo );
+    });
 
     $scope.navCollapsed = true;
 

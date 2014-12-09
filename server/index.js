@@ -30,6 +30,17 @@ app.get( '/', function ( req, res ) {
     res.redirect( path.join( publicDir, 'index.html' ) );
 });
 
+// API: user.
+app.get( '/api/user', function ( req, res ) {
+    var userInfo = {
+        username: 'testuser',
+        fullName: 'Test User',
+        created: new Date()
+    };
+    res.writeHead( 200, { 'Content-Type' : 'application/json' } );
+    res.end( JSON.stringify( userInfo ) );
+});
+
 //TODO:serve favicon
 //http://stackoverflow.com/questions/15463199/how-to-set-custom-favicon-in-node-js-express
 
